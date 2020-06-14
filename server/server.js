@@ -21,13 +21,14 @@ app.use(bodyParser.json())
 
 app.use(require('./routes/usuario'));
 
+mongoose.set('useCreateIndex', true);
 
 try {
-    mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useUnifiedTopology: true }, () =>
+    mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }, () =>
         console.log("connected"));
 } catch{
     console.log("could not connect");
-   // throw new err;
+    throw new err;
 }
 
 
