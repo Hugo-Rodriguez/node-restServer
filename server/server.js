@@ -1,4 +1,8 @@
+// ultimo video 17 del folder 9
+
 require('./config/config');
+
+const colors = require('colors');
 
 const express = require('express');
 const app = express();
@@ -15,55 +19,37 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-
-app.get('/usuario', function(req, res) {
-    res.json('get Usuario');
-});
-
-app.post('/usuario', function(req, res) {
-
-    let body = req.body;
-
-    if (body.nombre === undefined) {
-
-        res.status(400).json({
-            ok: false,
-            mensaje: 'El nombre es necesario'
-        });
-
-    } else {
-        res.json({
-            persona: body
-        });
-    }
-
-});
-
-app.put('/usuario/:id', function(req, res) {
-
-    let id = req.params.id;
-
-    res.json({
-        id
-    });
-});
-
-app.delete('/usuario', function(req, res) {
-    res.json('delete Usuario');
-});
+app.use(require('./routes/usuario'));
 
 
-mongoose.connect('mongodb://localhost:27017/cafe', (err, resp) => {
+try {
+    mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useUnifiedTopology: true }, () =>
+        console.log("connected"));
+} catch{
+    console.log("could not connect");
+   // throw new err;
+}
 
-    if (err) {
-        throw new err;
-    }
 
-    console.log("Bases de datos online");
 
-});
+//mongoose.connect('mongodb://localhost:27017/cafe', (err, resp) => {
+// try {
+//     mongoose.connect(process.env.URLDB, {useNewUrlParser: true, useUnifiedTopology: true });
+// } catch (error) {
+//     throw new err;
+// }
+
+// mongoose.connect(process.env.URLDB ,(err, resp) => {
+
+//     if (err) {
+//         throw new err;
+//     }
+
+//     console.log("Bases de datos online !!!".green);
+
+// });
 
 
 app.listen(process.env.PORT, () => {
-    console.log('Escuchando puerto: ', process.env.PORT);
+    console.log('Escuchando puerto: '.yellow, process.env.PORT.red);
 });
