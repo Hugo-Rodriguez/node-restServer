@@ -1,4 +1,4 @@
-// ultimo video 17 del folder 9
+// ultimo video 9 del folder 10
 
 require('./config/config');
 
@@ -19,15 +19,19 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.use(require('./routes/usuario'));
+// Configuración Global de Rutas
+app.use(require('./routes/index'));
 
+
+
+// MONGO
 mongoose.set('useCreateIndex', true);
 
 try {
     mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }, () =>
-        console.log("connected"));
+        console.log("connected".blue));
 } catch{
-    console.log("could not connect");
+    console.log("could not connect".red);
     throw new err;
 }
 
