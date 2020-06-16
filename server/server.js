@@ -1,4 +1,4 @@
-// ultimo video 9 del folder 10
+// ultimo video 5 del folder 11
 
 require('./config/config');
 
@@ -10,6 +10,7 @@ const app = express();
 
 // getting-started.js
 const mongoose = require('mongoose');
+const path = require('path');
 
 const bodyParser = require('body-parser');
 
@@ -18,6 +19,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
+
+
+// habilitar la carpeta public
+
+//console.log(path.resolve(__dirname,'../public'));
+app.use(express.static(path.resolve(__dirname,'../public')));
+
 
 // Configuración Global de Rutas
 app.use(require('./routes/index'));
