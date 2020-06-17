@@ -9,6 +9,13 @@ const {  verificaToken, verificaAdmin_Role } = require('../middlewares/autentica
 
 const app = express();
 
+// agregado por mi en Usuario y Categoria
+const mongoose = require('mongoose');
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
+
 
 app.get('/usuario', verificaToken ,(req, res) => {
 
@@ -102,6 +109,7 @@ app.put('/usuario/:id', [verificaToken, verificaAdmin_Role],function (req, res) 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
 
+    //Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioBD) => {
     Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioBD) => {
 
         if (err) {
