@@ -1,6 +1,9 @@
 const express = require("express");
 
-let { verificaToken } = require("../middlewares/autenticacion");
+let {
+  verificaToken,
+  verificaAdmin_Role,
+} = require("../middlewares/autenticacion");
 
 let app = express();
 
@@ -17,18 +20,63 @@ mongoose.set("useUnifiedTopology", true);
 // Mostrar todas las categorias
 // ============================
 
-app.get("/categoria", (req, res) => {});
+app.get("/categoria", verificaToken, (req, res) => {
+  Categoria.find({})
+  .sort('descripcion')
+  .populate('usuario','nombre email')
+  .exec((err, categorias) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        err,
+      });
+    }
+
+    res.json({
+      ok: true,
+      categorias,
+    });
+  });
+});
 
 // =============================
 // Mostrar una categorias por ID
 // =============================
 
-app.get("/categoria/:id", (req, res) => {
-  // CAtegoria.findById(.........)
+app.get("/categoria/:id", verificaToken, (req, res) => {
+  // Categoria.findById(...)
+
+  let id = req.params.id;
+
+  Categoria.findById(id,(err,categoriaBD)=>{
+
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        err,
+      });
+    }
+    
+    if (!categoriaBD) {
+      return res.status(500).json({
+        ok: false,
+        err: {
+          message: 'Categoria ID ! no encontrada'
+        }
+      });
+    }
+
+    res.json({
+      ok: true,
+      categoria: categoriaBD
+    });
+
+  })
+
 });
 
 // =============================
-// Crear nueva categorias
+// Crear nueva Categoria
 // =============================
 
 app.post("/categoria", verificaToken, (req, res) => {
@@ -52,7 +100,7 @@ app.post("/categoria", verificaToken, (req, res) => {
     if (!categoriaBD) {
       return res.status(400).json({
         ok: false,
-        err,
+        err: err,
       });
     }
 
@@ -64,10 +112,10 @@ app.post("/categoria", verificaToken, (req, res) => {
 });
 
 // =============================
-// Mostrar todas las categorias
+// Actualizar Categoria
 // =============================
 
-app.put("/categoria/:id", (req, res) => {
+app.put("/categoria/:id", verificaToken, (req, res) => {
   // regresa la nueva categoria
   // req.usuario._id
   let id = req.params.id;
@@ -105,12 +153,41 @@ app.put("/categoria/:id", (req, res) => {
 });
 
 // =============================
-// Borrar una categorias
+// Borrar una Categoria
 // =============================
 
-app.put("/categoria:/id", (req, res) => {
-  // rsolo un administrador puede borrar categoria
-  // Categoria.findByAndRemove
-});
+app.delete(
+  "/categoria/:id",
+  [verificaToken, verificaAdmin_Role],
+  (req, res) => {
+    // solo un administrador puede borrar categoria
+    // Categoria.findByIdAndRemove
+
+    let id = req.params.id;
+
+    Categoria.findByIdAndRemove(id, (err, categoriaBD) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err,
+        });
+      }
+
+      if (!categoriaBD) {
+        return res.status(400).json({
+          ok: false,
+          err: {
+            message: "El Id no existe",
+          },
+        });
+      }
+
+      res.json({
+        ok: true,
+        message: "Categoria Borrada",
+      });
+    });
+  }
+);
 
 module.exports = app;
