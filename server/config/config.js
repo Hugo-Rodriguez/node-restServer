@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === 'dev') {
 }
 
 // 'mongodb://localhost:27017/cafe'
-// urlDB = 'mongodb+srv://hugo:@Titina86@redesprueba-gs73z.mongodb.net/cafe?retryWrites=true&w=majority';
+// urlDB = 'mongodb+srv://hugo:xxxxxxx@redesprueba-gs73z.mongodb.net/cafe?retryWrites=true&w=majority';
 
 
 
